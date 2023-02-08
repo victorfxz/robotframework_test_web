@@ -1,5 +1,6 @@
 *** Settings ***
 Library    SeleniumLibrary
+Library    XML
 
 *** Variables ***
 ${URL}                         https://www.amazon.com.br/
@@ -14,6 +15,7 @@ Abrir o navegador
 
 Fechar o navegador
     Capture Page Screenshot
+    Wait Until Element Is Visible    locator=//span[@class='nav-line-1'][contains(.,'Devoluções')]
     Close Browser
 
 Acessar a home page do site Amazon.com.br
@@ -41,4 +43,24 @@ Clicar no botão de pesquisa
     Click Element    locator=nav-search-submit-button
 
 Verificar se o resultado da pesquisa está listando o produto "${PRODUTO}"
-    Wait Until Element Is Visible    locator=(//span[contains(.,'Xbox Series S')])[10]  
+    Wait Until Element Is Visible    locator=(//span[contains(.,'Xbox Series S')])[10]
+
+Clicar no produto "${PRODUTO}"
+    Click Image    locator=//img[@alt='Xbox Series S']
+
+Adicionar o produto "${PRODUTO}" no carrinho
+    Wait Until Element Is Visible    locator=//span[@class='a-size-large product-title-word-break'][contains(.,'${PRODUTO}')]
+    Click Element    locator=//input[contains(@name,'submit.add-to-cart')]
+
+Verificar se o produto "${PRODUTO}" foi adicionado com sucesso
+    Wait Until Element Is Visible    locator=//span[@class='a-size-medium-plus a-color-base sw-atc-text a-text-bold'][contains(.,'Adicionado ao carrinho')]  
+
+Acessar o carrinho de compras
+    Click Element    locator=//a[contains(@aria-label,'1 item no carrinho')]
+
+Remover o produto do carrinho
+    Wait Until Element Is Visible    locator=//span[@class='a-truncate-cut'][contains(.,'Xbox Series S')]
+    Click Element    locator=//input[contains(@aria-label,'Excluir Xbox Series S')]
+
+Verificar se o carrinho fica vazio
+    Wait Until Element Is Visible    locator=//h1[@class='a-spacing-mini a-spacing-top-base'][contains(.,'Seu carrinho de compras da Amazon está vazio.')]
